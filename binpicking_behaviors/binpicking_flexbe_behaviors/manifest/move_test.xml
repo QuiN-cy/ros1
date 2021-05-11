@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Move_test">
+
+	<executable package_path="binpicking_flexbe_behaviors.move_test_sm" class="Move_testSM" />
+	<tagstring></tagstring>
+	<author>QdJ</author>
+	<date>Thu Apr 29 2021</date>
+	<description>
+		8===D
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

@@ -1,0 +1,364 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="ur5e" >
+
+    <material name="blue">
+        <color rgba="0 0 0.8 1" />
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+    <material name="red">
+        <color rgba="0.8 0 0 1" />
+    </material>
+    <material name="green">
+        <color rgba="0 0.8 0 1" />
+    </material>
+    <material name="LightGrey">
+        <color rgba="0.7 0.7 0.7 1.0" />
+    </material>
+
+
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_e_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur5e -->
+  <xacro:include filename="$(find ur_e_description)/urdf/ur5e.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:arg name="kinematics_config" default="$(find ur_e_description)/config/ur5e_default.yaml"/>
+  <xacro:ur5e_robot prefix="" joint_limited="false"
+    />
+<!--   
+        kinematics_file="${load_yaml('$(arg kinematics_config)')}"
+-->
+
+  <!-- bracket/beugel -->
+  <xacro:include filename="$(find binpicking_support)/beugel/urdf/Beugel.urdf.xacro" />
+  <xacro:beugel/>
+
+  <!-- camera -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  <!-- Vacuum Gripper -->
+  <xacro:include filename="$(find binpicking_support)/epick_gripper/urdf/epick_gripper.urdf.xacro" />
+  <xacro:epick_gripper_urdf prefix="epick_gripper_"/>
+  
+  <link name="world" />
+  <link name="baseplate_link">
+    <visual>
+      <origin xyz="0 0 0.93" />
+      <geometry>
+        <box size="1.1 0.7 0.029" />
+      </geometry>
+      <material name="LightGrey"/>
+    </visual>
+  </link>
+
+  <joint name="baseplate_joint" type="fixed">
+    <origin xyz="0 0 0" />
+    <parent link="world" />
+    <child link="baseplate_link" />
+  </joint>
+
+  <link name="mountingplate_link">
+    <visual>
+      <origin xyz="0 0 0.0" />
+      <geometry>
+        <box size="0.3 0.3 0.012" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+  </link>
+
+  <joint name="mountingplate_joint" type="fixed">
+    <origin xyz="0.4 0.2 0.951" />
+    <parent link="baseplate_link" />
+    <child link="mountingplate_link" />
+  </joint>
+
+  <!-- robot to mouting_plate. -->
+  <joint name="mountingplate_link" type="fixed">
+    <parent link="mountingplate_link" />
+    <child link="base_link" />
+    <origin xyz="0.0 0.0 0.01" rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <link name="beugel_base_position"/>
+  <!-- tool0 to beugel_base_position -->
+  <!-- cahnge these valuse to place the beugel on the right position -->
+  <joint name="beugel_base_position_to_tool0" type="fixed">
+    <parent link="tool0" />
+    <child link="beugel_base_position" />
+    <origin xyz="0.0 0.00 0.009" rpy="${pi/2} 0 ${pi}"/> <!-- deze waardes zijn ook nogniet geheel juist-->
+  </joint>
+
+  <joint name="beugel_link_to_beugel_base_position" type="fixed">
+    <parent link="beugel_base_position" />
+    <child link="beugel_link" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <link name="beugel_camera_position"/>
+  <!-- beugel_base_position to beugel_camera_position -->
+  <joint name="beugel_to_beugel_base_position" type="fixed">
+    <parent link="beugel_link" />
+    <child link="beugel_camera_position" />
+    <origin xyz="0.0 -0.0049 0.0507" rpy="0.0 ${pi/6} -${pi/2}"/>
+  </joint>
+
+ <link name="camera_mouniting_holes"/>
+ <joint name="camera_mouniting_holes_to_beugel_camera_position" type="fixed">
+    <parent link="beugel_camera_position" />
+    <child link="camera_mouniting_holes" />
+    <origin xyz="-0.006 0.0 -0.006" rpy="0.0 0.0 ${pi}"/> <!-- deze waardes zijn nog niet geheel juist, natrekken bij mechanische tekeningen camera-->
+ </joint>
+
+  <!-- camera_to robot -->
+  <xacro:sensor_d435 parent="camera_mouniting_holes" use_nominal_extrinsics="true">
+    <origin xyz="0.0 0 0" rpy="0.0 0 0"/>
+  </xacro:sensor_d435>
+<!--
+  <joint name="gripper_to_tool1" type="fixed">
+    <parent link="tool0" />
+    <child link="gripper_base_link" />
+    <origin xyz="0.00 0.00 0.005" rpy="0.0 0.0 0.0"/>
+  </joint>
+-->
+<joint name="beugel_to_epick_gripper" type ="fixed">
+    <parent link="tool0" />
+    <child link="epick_gripper_base_link" />
+      
+<!--
+    <origin xyz="0.00072798 0.089658 ${-0.0080751 + 0.011}" rpy="0.0 0.0 0.0"/>
+    <origin xyz="0.089658 0.00072798 -0.0080751 + 0.011}" rpy="0.0 0.0 ${pi}"/>
+    <origin xyz="${0.00072798 + 0.089658} 0.089658 ${-0.0080751 + 0.011}" rpy="0.0 0.0 ${pi}"/>
+-->
+    <origin xyz="0.00072798 -0.089658 ${-0.0080751 + 0.011}" rpy="0.0 0.0 ${pi}"/>
+  </joint>
+
+
+<link name="robot_car_link">
+ <visual>
+   <geometry>
+	<box size= "1.1 0.7 0.90" />  
+   </geometry>
+  <material name="dark_blue">
+	<color rgba= "0 ${40/255} ${134/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="robot_car_joint" type="fixed">
+ <origin xyz="0 0 0.45 " />
+ <parent link="world" />
+ <child link= "robot_car_link" />
+</joint>
+
+
+<link name="wooden_box_link">
+ <visual>
+   <geometry>
+	<box size= "0.8 1.2 0.55" />  
+   </geometry>
+  <material name="beige">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="wooden_box_joint" type="fixed">
+ <origin xyz="0.95 -0.25 0.275 " />
+ <parent link="world" />
+ <child link= "wooden_box_link" />
+</joint>
+
+
+<link name="transport_link">
+ <visual>
+   <geometry>
+	<box size= "0.2 1.24 0.055" />  
+   </geometry>
+  <material name="grey">
+	<color rgba= "0 0 0 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="transport_joint" type="fixed">
+ <origin xyz=" 1.05 -0.25 0.8375 " />
+ <parent link="world" />
+ <child link= "transport_link" />
+</joint>
+
+
+
+<!--
+	poten voor lopende band
+-->
+
+<link name="poot1_link">
+ <visual>
+   <geometry>
+	<cylinder radius= "0.04" length="0.3145" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "0.6 0.6 0.6 1.0"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="poot1_joint" type="fixed">
+ <origin xyz=" 0.95 0.05 0.7075 " />
+ <parent link="world" />
+ <child link= "poot1_link" />
+</joint>
+
+
+<link name="poot2_link">
+ <visual>
+   <geometry>
+	<cylinder radius= "0.04" length="0.3145" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "0.6 0.6 0.6 1.0"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="poot2_joint" type="fixed">
+ <origin xyz=" 1.15 0.05 0.7075 " />
+ <parent link="world" />
+ <child link= "poot2_link" />
+</joint>
+
+
+<link name="poot3_link">
+ <visual>
+   <geometry>
+	<cylinder radius= "0.04" length="0.3145" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "0.6 0.6 0.6 1.0"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="poot3_joint" type="fixed">
+ <origin xyz=" 1.15 -0.45 0.7075 " />
+ <parent link="world" />
+ <child link= "poot3_link" />
+</joint>
+
+
+<link name="poot4_link">
+ <visual>
+   <geometry>
+	<cylinder radius= "0.04" length="0.3145" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "0.6 0.6 0.6 1.0"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="poot4_joint" type="fixed">
+ <origin xyz=" 0.95 -0.45 0.7075 " />
+ <parent link="world" />
+ <child link= "poot4_link" />
+</joint>
+
+<!--
+	frame voor lopende band
+-->
+
+<link name="Lange_Railing1_link">
+ <visual>
+   <geometry>
+	<box size= "0.02 1.265 0.02" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="Lange_Railing1_link" type="fixed">
+ <origin xyz="0.93 -0.25 0.93 " />
+ <parent link="world" />
+ <child link= "Lange_Railing1_link" />
+</joint>
+
+
+<link name="Lange_Railing2_link">
+ <visual>
+   <geometry>
+	<box size= "0.02 1.265 0.02" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="Lange_Railing2_link" type="fixed">
+ <origin xyz="1.175 -0.25 0.93 " />
+ <parent link="world" />
+ <child link= "Lange_Railing2_link" />
+</joint>
+
+
+<link name="korte_Railing1_link">
+ <visual>
+   <geometry>
+	<box size= "0.27 0.02 0.02" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="korte_Railing1_link" type="fixed">
+ <origin xyz="1.05 0.3775 0.93 " />
+ <parent link="world" />
+ <child link= "korte_Railing1_link" />
+</joint>
+
+
+<link name="korte_Railing2_link">
+ <visual>
+   <geometry>
+	<box size= "0.27 0.02 0.02" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="korte_Railing2_link" type="fixed">
+ <origin xyz="1.05 -0.8775 0.93 " />
+ <parent link="world" />
+ <child link= "korte_Railing2_link" />
+</joint>
+
+<link name="AGV_link">
+ <visual>
+   <geometry>
+	<box size= "0.4 0.5 0.5" />  
+   </geometry>
+  <material name="iron">
+	<color rgba= "${255/255} ${255/255} ${150/255} 1"/>
+  </material>
+ </visual>
+</link>
+
+<joint name="AGV_joint" type="fixed">
+ <origin xyz="0.40 0.8 0.25 " />
+ <parent link="world" />
+ <child link= "AGV_link" />
+</joint>
+
+
+</robot>

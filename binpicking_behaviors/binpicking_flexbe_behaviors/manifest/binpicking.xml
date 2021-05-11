@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Binpicking">
+
+	<executable package_path="binpicking_flexbe_behaviors.binpicking_sm" class="BinpickingSM" />
+	<tagstring></tagstring>
+	<author>Gerard Harkema</author>
+	<date>Sat Mar 14 2020</date>
+	<description>
+		Binpicking state machine
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

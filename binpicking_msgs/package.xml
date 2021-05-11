@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>binpicking_msgs</name>
+  <version>0.0.0</version>
+  <description>Messages, Services and Actions for the binpicking ROS packages</description>
+  <maintainer email="ga.harkema@avans.nl">Gerard Harkema</maintainer>
+  <author email="ga.harkema@avans.nl">Gerard Harkema</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+  <depend>moveit_msgs</depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>sensor_msgs</depend>
+
+</package>

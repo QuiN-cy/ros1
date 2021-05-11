@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+
+  <!-- start the pointcloud capture server -->
+  <node name="calculate_object_pose" pkg="binpicking_pcl" type="calculate_objectpose_from_pointcloud" output="screen"/>
+
+</launch>

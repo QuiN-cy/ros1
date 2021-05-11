@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="ur5e" >
+
+    <material name="blue">
+        <color rgba="0 0 0.8 1" />
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+    <material name="red">
+        <color rgba="0.8 0 0 1" />
+    </material>
+    <material name="green">
+        <color rgba="0 0.8 0 1" />
+    </material>
+    <material name="LightGrey">
+        <color rgba="0.7 0.7 0.7 1.0" />
+    </material>
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_e_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur5e -->
+  <xacro:include filename="$(find ur_e_description)/urdf/ur5e.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:arg name="kinematics_config" default="$(find ur_e_description)/config/ur5e_default.yaml"/>
+  <xacro:ur5e_robot prefix="" joint_limited="false"
+    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
+    />
+
+  <link name="world" />
+  <link name="baseplate_link">
+    <visual>
+      <origin xyz="0 0 0.0" />
+      <geometry>
+        <box size="1.1 0.7 0.03" />
+      </geometry>
+      <material name="LightGrey"/>
+    </visual>
+  </link>
+
+  <joint name="baseplate_joint" type="fixed">
+    <origin xyz="0 0 0" />
+    <parent link="world" />
+    <child link="baseplate_link" />
+  </joint>
+
+  <link name="mountingplate_link">
+    <visual>
+      <origin xyz="0 0 0.0" />
+      <geometry>
+        <box size="0.3 0.3 0.012" />
+      </geometry>
+      <material name="red"/>
+    </visual>
+  </link>
+
+  <joint name="mountingplate_joint" type="fixed">
+    <origin xyz="0.0 -0.20 0.021" />
+    <parent link="baseplate_link" />
+    <child link="mountingplate_link" />
+  </joint>
+
+  <!-- robot to mouting_plate. -->
+  <joint name="mountingplate_link" type="fixed">
+    <parent link="mountingplate_link" />
+    <child link="base_link" />
+    <origin xyz="0.0 0.0 0.01" rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <!-- Robotiq Gripper1 -->
+  <xacro:include filename="$(find robotiq_2f_85_gripper_visualization)/urdf/robotiq_arg2f_85_model_macro.xacro"/>
+  <xacro:robotiq_arg2f_85 prefix="gripper1_"/>
+
+  <!-- gripper1 to robot1. -->
+  <joint name="gripper1_to_robot1" type="fixed">
+    <parent link="tool0" />
+    <child link="gripper1_robotiq_arg2f_base_link" />
+  </joint>
+
+</robot>

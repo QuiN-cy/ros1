@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+
+  <!-- start the pointcloud camera -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+     <arg name="filters" value="pointcloud"/>
+  </include>
+
+  <!-- start the pointcloud capture server -->
+  <node name="capture_pointcloud_server" pkg="binpicking" type="capture_pointcloud_server.py"/>
+
+  <!-- start the environment -->
+  <include file="$(find binpicking_moveit_config)/launch/demo_real_world.launch"/>
+
+  <!-- start the calculate object pose server -->
+  <node name="calculate_object_pose" pkg="binpicking_pcl" type="calculate_objectpose_from_pointcloud" output="screen"/>
+
+</launch>

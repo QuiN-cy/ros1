@@ -1,0 +1,4 @@
+sensor_msgs/PointCloud2 pointcloud
+---
+geometry_msgs/PoseStamped     object_pose
+bool success			# Response message: Success or failure of capture.

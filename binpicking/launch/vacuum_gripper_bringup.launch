@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Normally, we would create a separate file and include that, but let's not complicate things -->
+<!--
+  <node name="vacuum_gripper" pkg="robotiq_vacuum_grippers_control" type="RobotiqVacuumGrippersRtuNode.py" args="/dev/ttyUSB0" />
+-->
+</launch>
+
+
